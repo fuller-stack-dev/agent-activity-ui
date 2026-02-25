@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "lit": "^4.0.0"
+    "lit": "^3.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

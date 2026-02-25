@@ -1,3 +1,4 @@
+import { runDemoScenario } from './demo/demo-scenario.js';
 /**
  * <oc-agents-view> — the main "Agents" panel that integrates all sub-components.
  *
@@ -109,9 +110,17 @@ export class OcAgentsView extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    WsService.getInstance().connect(GATEWAY_WS_URL);
-    // Request initial sessions list
-    WsService.getInstance().send({ type: 'sessions.list' });
+
+    const isDemo = new URLSearchParams(window.location.search).has('demo')
+      || window.location.hostname === 'localhost';
+
+    if (isDemo) {
+      // Demo mode: inject fake events directly, no real gateway needed
+      setTimeout(() => runDemoScenario(), 800);
+    } else {
+      WsService.getInstance().connect(GATEWAY_WS_URL);
+      WsService.getInstance().send({ type: 'sessions.list' });
+    }
   }
 
   private handleGatewayEvent(event: ActivityEvent): void {

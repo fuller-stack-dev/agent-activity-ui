@@ -61,7 +61,7 @@ function getEventLabel(event: ActivityEvent): string {
     case 'tool.completed':    return `✔ ${(event as { toolName?: string }).toolName ?? 'Tool'} done`;
     case 'subagent.spawned':  return '🤖 Sub-agent spawned';
     case 'subagent.completed':return '🏁 Sub-agent completed';
-    default:                  return event.eventKind;
+    default:                  return (event as { eventKind: string }).eventKind;
   }
 }
 
