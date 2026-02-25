@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenClaw — Agent Activity</title>
+  <meta name="description" content="Real-time interactive view of all running OpenClaw agents" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+  <!-- Gateway WS URL can be overridden at runtime -->
+  <script>
+    // Allow deployment to set WS URL via environment injection
+    window.OPENCLAW_GATEWAY_WS = window.OPENCLAW_GATEWAY_WS || 'ws://localhost:4000';
+  </script>
+</head>
+<body>
+  <oc-agents-view></oc-agents-view>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

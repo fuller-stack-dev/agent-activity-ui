@@ -1,0 +1,159 @@
+/**
+ * Design tokens — CSS custom properties for the Agent Activity UI.
+ * Import this stylesheet in the main entry point.
+ *
+ * All Lit shadow roots receive the tokens via CSS inheritance;
+ * use :host { ... } to forward them inside components.
+ */
+
+:root {
+  /* ─── Status colours ──────────────────────────────────────────────── */
+  --oc-color-idle:    #9ca3af;   /* grey-400    */
+  --oc-color-running: #22c55e;   /* green-500   */
+  --oc-color-error:   #ef4444;   /* red-500     */
+  --oc-color-waiting: #f59e0b;   /* amber-500   */
+
+  /* ─── Event card colours ─────────────────────────────────────────── */
+  --oc-color-event-tool:    #3b82f6;   /* blue-500    */
+  --oc-color-event-chat:    #8b5cf6;   /* violet-500  */
+  --oc-color-event-spawn:   #06b6d4;   /* cyan-500    */
+  --oc-color-event-error:   #ef4444;
+  --oc-color-event-default: #6b7280;   /* grey-500    */
+
+  /* ─── Backgrounds ────────────────────────────────────────────────── */
+  --oc-color-bg-primary:   #ffffff;
+  --oc-color-bg-secondary: #f9fafb;   /* grey-50     */
+  --oc-color-bg-tertiary:  #f3f4f6;   /* grey-100    */
+  --oc-color-bg-overlay:   rgba(0, 0, 0, 0.4);
+
+  /* ─── Text ───────────────────────────────────────────────────────── */
+  --oc-color-text-primary:  #111827;   /* grey-900    */
+  --oc-color-text-secondary:#374151;   /* grey-700    */
+  --oc-color-text-muted:    #6b7280;   /* grey-500    */
+  --oc-color-text-inverse:  #ffffff;
+
+  /* ─── Borders ────────────────────────────────────────────────────── */
+  --oc-color-border:        #e5e7eb;   /* grey-200    */
+  --oc-color-border-strong: #d1d5db;   /* grey-300    */
+
+  /* ─── Accent ─────────────────────────────────────────────────────── */
+  --oc-color-accent:        #6366f1;   /* indigo-500  */
+  --oc-color-accent-hover:  #4f46e5;   /* indigo-600  */
+  --oc-color-accent-light:  #eef2ff;   /* indigo-50   */
+
+  /* ─── Spacing ────────────────────────────────────────────────────── */
+  --oc-space-xs:   4px;
+  --oc-space-sm:   8px;
+  --oc-space-md:   16px;
+  --oc-space-lg:   24px;
+  --oc-space-xl:   40px;
+  --oc-space-2xl:  64px;
+
+  /* ─── Typography ─────────────────────────────────────────────────── */
+  --oc-font-sans:  ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --oc-font-mono:  ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+                   "Liberation Mono", Menlo, monospace;
+
+  --oc-font-size-xs: 0.75rem;   /*  12px */
+  --oc-font-size-sm: 0.875rem;  /*  14px */
+  --oc-font-size-md: 1rem;      /*  16px */
+  --oc-font-size-lg: 1.125rem;  /*  18px */
+  --oc-font-size-xl: 1.25rem;   /*  20px */
+
+  --oc-font-weight-normal:  400;
+  --oc-font-weight-medium:  500;
+  --oc-font-weight-semibold:600;
+  --oc-font-weight-bold:    700;
+
+  --oc-line-height-tight:  1.25;
+  --oc-line-height-normal: 1.5;
+
+  /* ─── Border radius ──────────────────────────────────────────────── */
+  --oc-radius-sm:  4px;
+  --oc-radius-md:  8px;
+  --oc-radius-lg:  12px;
+  --oc-radius-full: 9999px;
+
+  /* ─── Shadows ────────────────────────────────────────────────────── */
+  --oc-shadow-sm:  0 1px 2px 0 rgba(0,0,0,0.05);
+  --oc-shadow-md:  0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+  --oc-shadow-lg:  0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+
+  /* ─── Animation ──────────────────────────────────────────────────── */
+  --oc-transition-fast:   150ms ease;
+  --oc-transition-normal: 300ms ease;
+  --oc-transition-slow:   500ms ease;
+
+  /* ─── Z-indices ──────────────────────────────────────────────────── */
+  --oc-z-dropdown: 100;
+  --oc-z-modal:    200;
+  --oc-z-tooltip:  300;
+}
+
+/* ─── Dark mode overrides ─────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --oc-color-idle:    #6b7280;
+    --oc-color-running: #16a34a;
+    --oc-color-error:   #dc2626;
+    --oc-color-waiting: #d97706;
+
+    --oc-color-bg-primary:   #0f172a;   /* slate-900 */
+    --oc-color-bg-secondary: #1e293b;   /* slate-800 */
+    --oc-color-bg-tertiary:  #334155;   /* slate-700 */
+
+    --oc-color-text-primary:  #f1f5f9;  /* slate-100 */
+    --oc-color-text-secondary:#cbd5e1;  /* slate-300 */
+    --oc-color-text-muted:    #64748b;  /* slate-500 */
+
+    --oc-color-border:        #1e293b;
+    --oc-color-border-strong: #334155;
+
+    --oc-color-accent:        #818cf8;  /* indigo-400 */
+    --oc-color-accent-hover:  #a5b4fc;  /* indigo-300 */
+    --oc-color-accent-light:  #1e1b4b;  /* indigo-950 */
+
+    --oc-shadow-sm:  0 1px 2px 0 rgba(0,0,0,0.3);
+    --oc-shadow-md:  0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
+    --oc-shadow-lg:  0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -4px rgba(0,0,0,0.4);
+  }
+}
+
+/* ─── Global reset ────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--oc-font-sans);
+  font-size: var(--oc-font-size-md);
+  color: var(--oc-color-text-primary);
+  background: var(--oc-color-bg-primary);
+  line-height: var(--oc-line-height-normal);
+}
+
+/* ─── Pulse animation (used for 'running' status) ─────────────────────────── */
+
+@keyframes oc-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.oc-pulse {
+  animation: oc-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─── Slide-in animation (used for activity feed cards) ──────────────────── */
+
+@keyframes oc-slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.oc-slide-in {
+  animation: oc-slide-in-right var(--oc-transition-normal) ease forwards;
+}
