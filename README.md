@@ -1,177 +1,75 @@
 # Agent Activity UI
 
-> Real-time interactive panel for observing all OpenClaw agents in action.
+> A real-time dashboard for watching your OpenClaw AI agents work.
 
-## Overview
+![Screenshot placeholder](https://placehold.co/800x400?text=Agent+Activity+UI)
 
-A standalone Vite + Lit 4 + TypeScript web app that provides a live, hierarchical view of every running OpenClaw agent session — what each is doing, what tools it's calling, its token spend, and its parent/child relationships. From a single screen you can see everything and intervene (steer, abort, inject) without touching the CLI.
-
----
-
-## Architecture
-
-```
-┌────────────────────────────────────────────────────────────────┐
-│  <oc-resource-bar>  Active sessions · Tokens/hr · Errors · WS │
-├──────────────────┬─────────────────────────────────────────────┤
-│                  │                                             │
-│  <oc-agent-tree> │  <oc-activity-feed>                        │
-│                  │                                             │
-│  Hierarchical    │  Real-time event cards                      │
-│  session tree    │  (tool calls, runs, spawns, errors)         │
-│  with status     │  Filterable + pauseable                     │
-│  badges          │  Virtual-windowed rendering                 │
-│                  │                                             │
-├──────────────────┴─────────────────────────────────────────────┤
-│  <oc-session-detail>  (slide-in right panel)                   │
-│  Streaming output · Tool call log · Token stats · Actions      │
-│  [Abort] [Steer] [Inject]                                      │
-└────────────────────────────────────────────────────────────────┘
-```
+See every agent running, what tools they're calling, how much they're spending, and intervene (steer, abort, inject a message) — all from one screen. No CLI needed.
 
 ---
 
-## Components
+## Quickstart
 
-| Component | File | Description |
-|---|---|---|
-| `<oc-agents-view>` | `src/app.ts` | Root app; wires WS + state |
-| `<oc-resource-bar>` | `src/components/oc-resource-bar.ts` | Top metrics bar |
-| `<oc-agent-tree>` | `src/components/oc-agent-tree.ts` | Hierarchical session tree |
-| `<oc-activity-feed>` | `src/components/oc-activity-feed.ts` | Real-time event feed |
-| `<oc-session-detail>` | `src/components/oc-session-detail.ts` | Per-session detail panel |
-| `<oc-ws-status>` | `src/components/oc-ws-status.ts` | WS connection indicator |
-
-## Services
-
-| File | Description |
-|---|---|
-| `src/services/ws-service.ts` | Singleton WS client with auto-reconnect + send queue |
-| `src/services/ws-reactive-controller.ts` | Lit ReactiveController for WS events |
-| `src/services/gateway-ws-server.ts` | Server-side subscription manager |
-| `src/services/session-lifecycle-hooks.ts` | Hook functions to emit Gateway events |
-| `src/services/session-lineage.ts` | Parent↔child session map |
-| `src/services/activity-filter.ts` | Server-side event filter logic |
-
----
-
-## Setup
+**Requirements:** [Node.js 18+](https://nodejs.org) and [OpenClaw](https://openclaw.ai) installed and running.
 
 ```bash
-cd agents/agent-activity-ui
+git clone https://github.com/fuller-stack-dev/agent-activity-ui
+cd agent-activity-ui
 npm install
-npm run dev        # dev server on http://localhost:5173
-npm run build      # production build → dist/
-npm test           # run Vitest unit tests
+npm run dev
 ```
 
-### Gateway WS URL
+Open **http://localhost:5173** in your browser. That's it.
 
-Override the Gateway WebSocket URL at startup:
+The UI auto-connects to your local OpenClaw gateway. If it shows "Disconnected", make sure the OpenClaw gateway is running (`openclaw gateway start`).
+
+---
+
+## What You'll See
+
+| Panel | What it shows |
+|---|---|
+| **Top bar** | Active sessions, token spend per hour, error count, connection status |
+| **Left panel** | A live tree of all running agents and their child sessions |
+| **Right panel** | Real-time event feed — every tool call, spawn, run, and error as it happens |
+| **Detail panel** | Click any agent to see its full streaming output, tool call log, token stats, and action buttons |
+
+### Actions
+- **Steer** — Send a new instruction to a running agent mid-task
+- **Abort** — Kill a stuck or runaway agent
+- **Inject** — Push a system message into an agent's context
+
+---
+
+## Configuration
+
+By default the UI connects to `ws://localhost:18789` (the standard OpenClaw gateway port).
+
+To connect to a remote gateway (e.g. via [Tailscale Funnel](https://tailscale.com/kb/1223/funnel)):
 
 ```html
-<script>window.OPENCLAW_GATEWAY_WS = 'ws://your-gateway:4000';</script>
-```
-
-Or at build time via environment variable (extend `vite.config.ts`).
-
----
-
-## Integration with OpenClaw Gateway
-
-### Wire lifecycle hooks
-
-In the OpenClaw session manager, call:
-
-```ts
-import {
-  emitSessionCreated,
-  emitSessionDestroyed,
-  emitRunStarted,
-  emitRunCompleted,
-  emitToolCallStarted,
-  emitToolCallCompleted,
-  emitSubAgentSpawned,
-} from './src/services/session-lifecycle-hooks.js';
-```
-
-Call each function at the appropriate point in the session/run/tool lifecycle.
-
-### Wire subscription manager
-
-In the Gateway WS message router, handle:
-
-- `{ type: 'sessions.activity.subscribe', filter?: ActivityEventFilter }` → `activityManager.subscribeToActivity(clientId, filter)`
-- `{ type: 'sessions.activity.unsubscribe' }` → `activityManager.unsubscribeFromActivity(clientId)`
-- `{ type: 'sessions.detail', sessionKey: string }` → `activityManager.handleSessionsDetailRPC(sessionKey)`
-
-Inject the transport send function:
-
-```ts
-activityManager.setSendCallback((clientId, event) => {
-  wsServer.sendToClient(clientId, JSON.stringify(event));
-});
+<!-- Add to index.html before the closing </body> tag -->
+<script>window.OPENCLAW_GATEWAY_WS = 'wss://your-machine.tailnet.ts.net';</script>
 ```
 
 ---
 
-## Design Principles
-
-- **Calm, not chaotic** — CSS transitions, no layout shifts, 200ms event batching
-- **Virtual scrolling** — Activity feed renders at most 80 items (VIRTUAL_WINDOW constant)
-- **Reconnection** — Exponential backoff (1s→30s) with ±20% jitter, pause 60s after 5 fails
-- **Keyboard-first** — Full arrow-key nav in tree, Tab/Enter for actions, Esc to close
-- **Accessibility** — ARIA tree roles, `aria-live` on feed, focus indicators, dark mode support
-- **Zero polling** — All updates are push-based via WS events
-
----
-
-## Testing
+## Building for Production
 
 ```bash
-npm test
+npm run build   # outputs to dist/
 ```
 
-Tests cover:
-
-- `ActivitySubscriptionManager` subscribe/unsubscribe/rate-limiting
-- `matchesFilter` / `mergeFilters` with various filter combinations  
-- `SessionLineageMap` tree construction + mutation
+Serve the `dist/` folder with any static file server (nginx, Caddy, `npx serve dist`, etc.).
 
 ---
 
-## File Tree
+## Tech Stack
 
-```
-agents/agent-activity-ui/
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── README.md
-└── src/
-    ├── main.ts
-    ├── app.ts                             # Root component
-    ├── components/
-    │   ├── oc-agent-tree.ts               # Phase 3
-    │   ├── oc-activity-feed.ts            # Phase 4
-    │   ├── oc-session-detail.ts           # Phase 5
-    │   ├── oc-resource-bar.ts             # Phase 6
-    │   └── oc-ws-status.ts               # Phase 2
-    ├── services/
-    │   ├── ws-service.ts                  # Phase 2
-    │   ├── ws-reactive-controller.ts      # Phase 2
-    │   ├── gateway-ws-server.ts           # Phase 1
-    │   ├── session-lifecycle-hooks.ts     # Phase 1
-    │   ├── session-lineage.ts             # Phase 1
-    │   └── activity-filter.ts             # Phase 1
-    ├── types/
-    │   ├── gateway-events.ts              # Phase 1
-    │   └── ui-state.ts                    # Phase 2
-    ├── utils/
-    │   └── throttle.ts                    # Phase 2
-    ├── styles/
-    │   └── design-tokens.css              # Phase 2
-    └── tests/
-        └── gateway-events.test.ts         # Phase 1
-```
+Built with [Vite](https://vitejs.dev), [Lit 4](https://lit.dev) web components, and TypeScript. Zero runtime dependencies beyond Lit.
+
+---
+
+## Contributing / Advanced Integration
+
+The UI connects to OpenClaw via WebSocket and listens for session lifecycle events. If you're building your own agent framework and want to wire this UI in, see the integration guide in [`src/services/`](src/services/).
